@@ -1,0 +1,17 @@
+{
+    "targets": {
+        "test": {
+            "outFile": "build/test.wasm",
+            "sourceMap": "build/test.wasm.map",
+            "textFile": "build/test.wat",
+            "optimizeLevel": 0,
+            "shrinkLevel": 0,
+            "converge": false,
+            "noAssert": false
+        }
+    },
+    "options": {
+        "transform": [],
+        "bindings": "esm"
+    }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "graph-packet-parser",
+  "version": "0.1.0",
+  "description": "Customized packet parsing for The Graph's API",
+  "scripts": {
+    "build:test": "asc src/test.ts --target test",
+    "test:node": "node test",
+    "prettier": "as-prettier -w ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JairusSW/graph-packet-parser.git"
+  },
+  "keywords": [
+    "assemblyscript",
+    "packet",
+    "graph"
+  ],
+  "author": "Jairus Tanaka",
+  "contributors": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JairusSW/graph-packet-parser/issues"
+  },
+  "homepage": "https://github.com/JairusSW/graph-packet-parser#readme",
+  "devDependencies": {
+    "assemblyscript": "^0.27.6",
+    "assemblyscript-prettier": "^2.0.2",
+    "prettier": "^3.0.0"
+  },
+  "type": "module"
+}
