@@ -16,7 +16,6 @@
 // Transaction ID is the same as the ID
 // Timestamp, amount0, amount1, tick, sqrtPriceX96 must be sliced between ["]
 
-
 export class Swap {
     id: string = "";
     timestamp: string = "";
@@ -32,32 +31,43 @@ export class Transaction {
     blockNumber: string = "";
 }
 
-export function parseSwap(swap_data: string): Swap {
-    const swap = initSwap();
-    let index = 0;
-    index = parseIDs(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    index = parseTimestamp(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    index = parseAmount0(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    index = parseAmount1(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    index = parseBlockNumber(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    index = parseTick(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    index = parseSqrtPriceX96(swap_data, swap, index);
-    console.log("index: " + index.toString());
-    return swap;
+let parse_offset = 18;
+
+export function parseSwaps(swap_data: string): Swap[] {
+    //let lastOffset = 0;
+    const swaps = new Array<Swap>();
+    while (parse_offset < swap_data.length - 50) {
+        const swap = initSwap();
+        parse_offset = parseSwap(swap_data, swap, parse_offset);
+        /*if (lastOffset === parse_offset) {
+            console.log(`Encountered error parsing at [${swap_data.charAt(parse_offset)}] ${swap_data.slice(parse_offset - 10, parse_offset + 10)}`);
+            break;
+        } else {
+            lastOffset = parse_offset;
+        }*/
+        swaps.push(swap);
+    }
+    parse_offset = 18;
+    return swaps;
+}
+
+export function parseSwap(swap_data: string, swap: Swap, offset: i32): i32 {
+    offset = parseIDs(swap_data, swap, offset);
+    offset = parseTimestamp(swap_data, swap, offset);
+    offset = parseAmount0(swap_data, swap, offset);
+    offset = parseAmount1(swap_data, swap, offset);
+    offset = parseBlockNumber(swap_data, swap, offset);
+    offset = parseTick(swap_data, swap, offset);
+    offset = parseSqrtPriceX96(swap_data, swap, offset);
+    return offset;
 }
 
 // @ts-ignore
 @inline export function parseIDs(swap_data: string, swap: Swap, index: i32): i32 {
-    swap.transaction.id = swap_data.slice(7, 73);
-    index = swap_data.indexOf("\"", 79);
-    swap.id = swap.transaction.id + swap_data.slice(73, index);
-    return index;
+    swap.transaction.id = swap_data.slice(index + 7, index + 73);
+    const end_index = swap_data.indexOf("\"", index + 79);
+    swap.id = swap.transaction.id + swap_data.slice(index + 73, index);
+    return end_index;
 }
 
 // @ts-ignore
@@ -97,8 +107,9 @@ export function parseSwap(swap_data: string): Swap {
 
 // @ts-ignore
 @inline export function parseSqrtPriceX96(swap_data: string, swap: Swap, index: i32): i32 {
-    swap.sqrtPriceX96 = swap_data.slice(index + 18, swap_data.length - 2);
-    return 0;
+    const end_index = swap_data.indexOf("\"", index + 18);
+    swap.sqrtPriceX96 = swap_data.slice(index + 18, end_index);
+    return end_index + 3;
 }
 
 export function initSwap(): Swap {

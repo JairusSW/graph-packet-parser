@@ -5,6 +5,7 @@
   "scripts": {
     "build:test": "asc src/test.ts --target test",
     "test:node": "node test",
+    "test:wasmtime": "wasmtime ./build/test.wasm",
     "prettier": "as-prettier -w ."
   },
   "repository": {
@@ -28,5 +29,8 @@
     "assemblyscript-prettier": "^2.0.2",
     "prettier": "^3.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@assemblyscript/wasi-shim": "^0.1.0"
+  }
 }
