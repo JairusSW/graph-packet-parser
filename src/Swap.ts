@@ -31,16 +31,86 @@ export class Transaction {
     blockNumber: string = "";
 }
 
+export class SwapParser {
+    private offset: u32 = 18;
+    constructor(private swapTextData: string) {}
+    parseTransactionID(): string {
+        const result = this.swapTextData.slice(this.offset + 7, this.offset + 73);
+        this.offset = this.swapTextData.indexOf("\"", this.offset + 79);
+        return result;
+    }
+    parseID(): string {
+        return this.swapTextData.slice(25, this.offset);
+    }
+    parseTimestamp(): string {
+        const end_index = this.swapTextData.indexOf("\"", this.offset + 25);
+        const result = this.swapTextData.slice(this.offset + 15, end_index);
+        this.offset = end_index;
+        return result;
+    }
+    parseAmount0(): string {
+        const end_index = this.swapTextData.indexOf("\"", this.offset += 13);
+        const result = this.swapTextData.slice(this.offset, this.swapTextData.indexOf("\"", this.offset + 1));
+        this.offset = end_index;
+        return result;
+    }
+    parseAmount1(): string {
+        const end_index = this.swapTextData.indexOf("\"", this.offset += 13);
+        const result = this.swapTextData.slice(this.offset, this.swapTextData.indexOf("\"", this.offset + 1));
+        this.offset = end_index;
+        return result;
+    }
+    parseBlockNumber(): string {
+        const end_index = this.swapTextData.indexOf("\"", this.offset += 106);
+        const result = this.swapTextData.slice(this.offset, this.swapTextData.indexOf("\"", this.offset + 1));
+        this.offset = end_index;
+        return result;
+    }
+    parseTick(): string {
+        const end_index = this.swapTextData.indexOf("\"", this.offset += 11);
+        const result = this.swapTextData.slice(index, this.swapTextData.indexOf("\"", this.offset + 1));
+        this.offset = end_index;
+        return result;
+    }
+    parseSqrtPriceX96(): string {
+        const end_index = this.swapTextData.indexOf("\"", this.offset + 18);
+        const result = this.swapTextData.slice(this.offset + 18, end_index);
+        this.offset = end_index + 3;
+        return result;
+    }
+    parseToSwaps(): Swap[] {
+        const swaps = new Array<Swap>();
+        while (true) {
+            const swap = this.parseNextSwap();
+            if (!swap) break;
+        }
+        return swaps;
+    }
+    parseNextSwap(): Swap | null {
+        const swap = initSwap();
+        swap.transaction.id = this.parseTransactionID();
+        swap.id = this.parseID();
+        swap.timestamp = this.parseTimestamp();
+        swap.amount0 = this.parseAmount0();
+        swap.amount1 = this.parseAmount1();
+        swap.transaction.blockNumber = this.parseBlockNumber();
+        swap.tick = this.parseTick();
+        swap.sqrtPriceX96 = this.parseSqrtPriceX96();
+        if (this.offset > this.swapTextData.length - 50) return null;
+        return swap;
+    }
+}
+
 let parse_offset = 18;
 
-export function parseSwaps(swap_data: string): Swap[] {
+export function parseSwaps(this.swapTextData: string): Swap[] {
     //let lastOffset = 0;
     const swaps = new Array<Swap>();
-    while (parse_offset < swap_data.length - 50) {
+    while (parse_offset < this.swapTextData.length - 50) {
         const swap = initSwap();
-        parse_offset = parseSwap(swap_data, swap, parse_offset);
+        parse_offset = parseSwap(this.swapTextData, swap, parse_offset);
         /*if (lastOffset === parse_offset) {
-            console.log(`Encountered error parsing at [${swap_data.charAt(parse_offset)}] ${swap_data.slice(parse_offset - 10, parse_offset + 10)}`);
+            console.log(`Encountered error parsing at [${this.swapTextData.charAt(parse_offset)}] ${this.swapTextData.slice(parse_offset - 10, parse_offset + 10)}`);
             break;
         } else {
             lastOffset = parse_offset;
@@ -51,65 +121,65 @@ export function parseSwaps(swap_data: string): Swap[] {
     return swaps;
 }
 
-export function parseSwap(swap_data: string, swap: Swap, offset: i32): i32 {
-    offset = parseIDs(swap_data, swap, offset);
-    offset = parseTimestamp(swap_data, swap, offset);
-    offset = parseAmount0(swap_data, swap, offset);
-    offset = parseAmount1(swap_data, swap, offset);
-    offset = parseBlockNumber(swap_data, swap, offset);
-    offset = parseTick(swap_data, swap, offset);
-    offset = parseSqrtPriceX96(swap_data, swap, offset);
+export function parseSwap(this.swapTextData: string, swap: Swap, offset: i32): i32 {
+    offset = parseIDs(this.swapTextData, swap, offset);
+    offset = parseTimestamp(this.swapTextData, swap, offset);
+    offset = parseAmount0(this.swapTextData, swap, offset);
+    offset = parseAmount1(this.swapTextData, swap, offset);
+    offset = parseBlockNumber(this.swapTextData, swap, offset);
+    offset = parseTick(this.swapTextData, swap, offset);
+    offset = parseSqrtPriceX96(this.swapTextData, swap, offset);
     return offset;
 }
 
 // @ts-ignore
-@inline export function parseIDs(swap_data: string, swap: Swap, index: i32): i32 {
-    swap.transaction.id = swap_data.slice(index + 7, index + 73);
-    const end_index = swap_data.indexOf("\"", index + 79);
-    swap.id = swap.transaction.id + swap_data.slice(index + 73, index);
+@inline export function parseIDs(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    swap.transaction.id = this.swapTextData.slice(this.offset + 7, this.offset + 73);
+    const end_index = this.swapTextData.indexOf("\"", this.offset + 79);
+    swap.id = swap.transaction.id + this.swapTextData.slice(this.offset + 73, this.offset);
     return end_index;
 }
 
 // @ts-ignore
-@inline export function parseTimestamp(swap_data: string, swap: Swap, index: i32): i32 {
-    const end_index = swap_data.indexOf("\"", index + 25);
-    swap.timestamp = swap_data.slice(index + 15, end_index);
+@inline export function parseTimestamp(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    const end_index = this.swapTextData.indexOf("\"", this.offset + 25);
+    swap.timestamp = this.swapTextData.slice(this.offset + 15, end_this.offset);
     return end_index;
 }
 
 // @ts-ignore
-@inline export function parseAmount0(swap_data: string, swap: Swap, index: i32): i32 {
-    const end_index = swap_data.indexOf("\"", index += 13);
-    swap.amount0 = swap_data.slice(index, swap_data.indexOf("\"", index + 1));
+@inline export function parseAmount0(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    const end_index = this.swapTextData.indexOf("\"", this.offset += 13);
+    swap.amount0 = this.swapTextData.slice(index, this.swapTextData.indexOf("\"", this.offset + 1));
     return end_index;
 }
 
 // @ts-ignore
-@inline export function parseAmount1(swap_data: string, swap: Swap, index: i32): i32 {
-    const end_index = swap_data.indexOf("\"", index += 13);
-    swap.amount1 = swap_data.slice(index, swap_data.indexOf("\"", index + 1));
+@inline export function parseAmount1(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    const end_index = this.swapTextData.indexOf("\"", this.offset += 13);
+    swap.amount1 = this.swapTextData.slice(index, this.swapTextData.indexOf("\"", this.offset + 1));
     return end_index;
 }
 
 // @ts-ignore
-@inline export function parseBlockNumber(swap_data: string, swap: Swap, index: i32): i32 {
-    const end_index = swap_data.indexOf("\"", index += 106);
-    swap.transaction.blockNumber = swap_data.slice(index, swap_data.indexOf("\"", index + 1));
+@inline export function parseBlockNumber(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    const end_index = this.swapTextData.indexOf("\"", this.offset += 106);
+    swap.transaction.blockNumber = this.swapTextData.slice(index, this.swapTextData.indexOf("\"", this.offset + 1));
     return end_index;
 }
 
 // @ts-ignore
-@inline export function parseTick(swap_data: string, swap: Swap, index: i32): i32 {
-    const end_index = swap_data.indexOf("\"", index += 11);
-    swap.tick = swap_data.slice(index, swap_data.indexOf("\"", index + 1));
+@inline export function parseTick(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    const end_index = this.swapTextData.indexOf("\"", this.offset += 11);
+    swap.tick = this.swapTextData.slice(index, this.swapTextData.indexOf("\"", this.offset + 1));
     return end_index;
 }
 
 // @ts-ignore
-@inline export function parseSqrtPriceX96(swap_data: string, swap: Swap, index: i32): i32 {
-    const end_index = swap_data.indexOf("\"", index + 18);
-    swap.sqrtPriceX96 = swap_data.slice(index + 18, end_index);
-    return end_index + 3;
+@inline export function parseSqrtPriceX96(this.swapTextData: string, swap: Swap, index: i32): i32 {
+    const end_index = this.swapTextData.indexOf("\"", this.offset + 18);
+    swap.sqrtPriceX96 = this.swapTextData.slice(this.offset + 18, end_this.offset);
+    return end_this.offset + 3;
 }
 
 export function initSwap(): Swap {
