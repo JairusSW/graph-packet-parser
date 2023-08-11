@@ -31,8 +31,8 @@ export class Transaction {
     blockNumber: string = "";
 }
 export class SwapParser {
-    private offset: u32 = 18;
-    private max_len: u32;
+    public offset: u32 = 18;
+    public max_len: u32;
     constructor(private swapTextData: string) {
         this.max_len = u32(this.swapTextData.length - 50);
     }
