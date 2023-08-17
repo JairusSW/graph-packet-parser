@@ -84,13 +84,13 @@ export class SwapParser {
     parseToSwaps<T extends Swap>(): T[] {
         const swaps = new Array<T>();
         while (true) {
-            const swap = this.parseNextSwap();
+            const swap = this.parseNextSwap<T>();
             if (!swap) break;
         }
         return swaps;
     }
     parseNextSwap<T extends Swap>(): T | null {
-        const swap = initialize<T>();
+        const swap = instantiate<T>();
         swap.transaction.id = this.parseTransactionID();
         swap.id = this.parseID();
         swap.timestamp = this.parseTimestamp();
