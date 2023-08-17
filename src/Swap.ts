@@ -16,20 +16,21 @@
 // Transaction ID is the same as the ID
 // Timestamp, amount0, amount1, tick, sqrtPriceX96 must be sliced between ["]
 
-export class Swap {
-    id: string = "";
-    timestamp: string = "";
-    amount0: string = "";
-    amount1: string = "";
-    transaction: Transaction = new Transaction();
-    tick: string = "";
-    sqrtPriceX96: string = "";
+interface Swap {
+    id: string;
+    timestamp: string;
+    amount0: string;
+    amount1: string;
+    transaction: Transaction;
+    tick: string;
+    sqrtPriceX96: string;
 }
 
-export class Transaction {
-    id: string = "";
-    blockNumber: string = "";
+interface Transaction {
+    id: string;
+    blockNumber: string;
 }
+
 export class SwapParser {
     public offset: u32 = 18;
     public max_len: u32;
@@ -88,8 +89,8 @@ export class SwapParser {
         }
         return swaps;
     }
-    parseNextSwap(): Swap | null {
-        const swap = initSwap();
+    parseNextSwap<T extends Swap>(): T | null {
+        const swap = initialize<T>();
         swap.transaction.id = this.parseTransactionID();
         swap.id = this.parseID();
         swap.timestamp = this.parseTimestamp();
@@ -101,12 +102,4 @@ export class SwapParser {
         if (this.offset > this.max_len) return null;
         return swap;
     }
-}
-
-export function initSwap(): Swap {
-    // @ts-ignore
-    const swap = changetype<Swap>(__new(offsetof<Swap>(), idof<Swap>()));
-    // @ts-ignore
-    swap.transaction = changetype<Transaction>(__new(offsetof<Transaction>(), idof<Transaction>()));
-    return swap;
 }
