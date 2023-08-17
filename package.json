@@ -1,6 +1,6 @@
 {
   "name": "graph-packet-parser",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Customized packet parsing for The Graph's API",
   "scripts": {
     "build:test": "asc src/test.ts --target test",
