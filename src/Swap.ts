@@ -81,8 +81,8 @@ export class SwapParser {
         this.offset = end_index + 3;
         return result;
     }
-    parseToSwaps(): Swap[] {
-        const swaps = new Array<Swap>();
+    parseToSwaps<T extends Swap>(): T[] {
+        const swaps = new Array<T>();
         while (true) {
             const swap = this.parseNextSwap();
             if (!swap) break;
